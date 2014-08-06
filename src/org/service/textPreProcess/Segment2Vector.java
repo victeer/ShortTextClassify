@@ -24,27 +24,11 @@ public class Segment2Vector {
 	 * @param form
 	 */
 	public static void getDocVecFromQiefenText(String dictFile,String docTermFile,String docVecFileString,String form){
-		HashMap<String,Integer> wordList=new HashMap<String,Integer>();
-		int FeatureNum=0;
+		HashMap<String,double[]> wordList=DictGenerator.getWordList(dictFile);
+		int FeatureNum=wordList.size();
 			
 			//read the wordlist into hashmap and make every word map a unique number.
-		try{
-			String word;
-			BufferedReader reader=new BufferedReader(new InputStreamReader (new FileInputStream(dictFile),Constant.encoding));
-			while((word=reader.readLine())!=null){
-				if (word.length()==0)
-					continue;
-				if(word.matches("[0-9]+"))
-						continue;
-					wordList.put(word, FeatureNum);
-					FeatureNum++;
-				}
-				System.out.println(FeatureNum);
-				reader.close();
-			}catch(Exception e){
-				e.printStackTrace();
-			}
-		System.out.println("Feature num:"+FeatureNum);
+
 		//read docTerm.txt to get the doc vector
 		try{
 			BufferedWriter out=null;
@@ -56,14 +40,15 @@ public class Segment2Vector {
 	        String termString;
 			BufferedReader reader=new BufferedReader(new InputStreamReader (new FileInputStream(docTermFile),Constant.encoding));
 			while((termString=reader.readLine())!=null){
-				int[] docArray=new int[FeatureNum];
-				for(int i=0;i<FeatureNum;i++)
-					docArray[i]=0;
+				double[] docArray=new double[FeatureNum];
 				String[] docTermList=termString.split("\t");
-				Integer pos=null;
+				double[] pos=null;
 				for(String term:docTermList){
 					if((pos=wordList.get(term.trim().toLowerCase())) != null){
-						docArray[pos]++;
+						if(docArray[(int) pos[0]]==0.0){
+							docArray[(int) pos[0]]=pos[1];
+						}
+						
 					}
 				}
 				
@@ -71,12 +56,8 @@ public class Segment2Vector {
 				String docVec="";
 				String className="";
 					
-				if(form.equalsIgnoreCase("shortForm")){
-					docVec=shortForm(docArray);
-				}else if(form.equalsIgnoreCase("libSvm")){
+				if(form.equalsIgnoreCase("libSvm")){
 					docVec=libsvmForm(className, docArray);
-				}else if(form.equalsIgnoreCase("mySvm")){
-					docVec=mySvmForm(className, docArray);
 				}
 				out.write(docVec);
 			}
@@ -144,7 +125,7 @@ public class Segment2Vector {
 		docVec+="\n";
 		return docVec;
 	}
-	private static String libsvmForm(String className,int[] docArray){
+	private static String libsvmForm(String className,double[] docArray){
 		String docVec="";
 		if(className!="")
 			docVec+=className+"\t";
@@ -178,6 +159,6 @@ public class Segment2Vector {
 		//System.out.println(System.getProperty("java.class.path")+"\n"+System.getProperty("user.dir"));
 		//String s = "test中d文dsaf中男大3443n中国43中国人0ewldfls=103NO.津007";  
 		//getDocVecFromText("D:\\Project\\Java\\PoiClassify\\tmp\\data\\dict.txt", SingleWordSegment.seg(s), "D:\\Project\\Java\\PoiClassify\\tmp\\data\\vec.txt", "libSvm");
-		getDocVecFromQiefenText("","D:\\实践活动\\项目\\搜狗地图\\POI描述分类\\tianjin test\\nav_切分.txt", "D:\\实践活动\\项目\\搜狗地图\\POI描述分类\\tianjin test\\docVec.txt", "libsvm");
+		getDocVecFromQiefenText("D:\\实践活动\\项目\\搜狗地图\\POI描述分类\\tianjin test\\test\\newDict.txt","D:\\实践活动\\项目\\搜狗地图\\POI描述分类\\tianjin test\\test\\segment.txt", "D:\\实践活动\\项目\\搜狗地图\\POI描述分类\\tianjin test\\test\\newDocVec.txt", "libsvm");
 	}
 }

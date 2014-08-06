@@ -91,4 +91,9 @@ public class FileOperation {
 			e.printStackTrace();
 		}
 	}
+	
+	public static void main(String[] args){
+		String path="D:\\实践活动\\项目\\搜狗地图\\POI描述分类\\tianjin test\\test\\";
+		merge(path+"classNum.txt", path+"newDocVec.txt","\t", path+"newLibsvm.txt");
+	}
 }
