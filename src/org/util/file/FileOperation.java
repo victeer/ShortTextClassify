@@ -64,8 +64,9 @@ public class FileOperation {
 	 * @param vecFile
 	 * @param separator
 	 * @param resultFile
+	 * @param headline 第一行的内容可以为“”
 	 */
-	public static void merge(String classFile,String vecFile,String separator,String resultFile){
+	public static void merge(String classFile,String vecFile,String separator,String resultFile,String headline){
 		try{
 			BufferedWriter out=null;
 			File f=new File(resultFile);
@@ -77,6 +78,8 @@ public class FileOperation {
 			inClass=new BufferedReader(new InputStreamReader (new FileInputStream(classFile),Constant.encoding));
 			inVec=new BufferedReader(new InputStreamReader (new FileInputStream(vecFile),Constant.encoding));
 			String className,vec,resultString;
+			if(!headline.equals(""))//不是空的话，写入文件中
+				out.write(headline+"\n");
 			while((className=inClass.readLine())!=null){
 				vec=inVec.readLine();
 				if(vec!=null){

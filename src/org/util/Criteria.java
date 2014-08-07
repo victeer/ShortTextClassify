@@ -31,12 +31,12 @@ public class Criteria {
 			String tmp;
 			while((tmp=inOri.readLine())!=null){
 				if(tmp.trim()!=null){
-					oriClass.add(Integer.valueOf(tmp.trim()));
+					oriClass.add(Double.valueOf(tmp.trim()).intValue());
 				}
 			}
 			while((tmp=inPred.readLine())!=null){
 				if(tmp.trim()!=null){
-					predClass.add(Integer.valueOf(tmp.trim()));
+					predClass.add(Double.valueOf(tmp.trim()).intValue());
 				}
 			}
 			
@@ -70,19 +70,21 @@ public class Criteria {
 				f.createNewFile();
 			}
 			BufferedWriter out=new BufferedWriter(new OutputStreamWriter(new FileOutputStream(f),Constant.encoding));
-			out.write("class\t oriCount\t predCount\t rightCount\t precision\t recall\t F1\n");
+			out.write("class,oriCount,predCount,rightCount,precision,recall,F1\n");
 			
 			int totalRight=0;
 			for(int i=0;i<labelNum;i++){
-				out.write((i+1)+"\t"+test[i]+"\t"+predict[i]+"\t"+right[i]+"\t");
+				out.write((i+1)+","+test[i]+","+predict[i]+","+right[i]+",");
 				if(right[i]!=0){
 					criteria[i][0]=(float)right[i]/predict[i];
 					criteria[i][1]=(float)right[i]/test[i];
 					if(criteria[i][0]+criteria[i][1]>0){
 						criteria[i][2]=2*criteria[i][0]*criteria[i][1]/(criteria[i][0]+criteria[i][1]);
 					}
-					out.write(criteria[i][0]+"\t"+criteria[i][1]+"\t"+criteria[i][2]);
+					out.write(criteria[i][0]+","+criteria[i][1]+","+criteria[i][2]);
 					totalRight+=right[i];
+				}else{
+					out.write("0,0,0");
 				}
 				out.write("\n");
 			}

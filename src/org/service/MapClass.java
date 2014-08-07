@@ -42,7 +42,46 @@ public class MapClass {
 	}
 	/**
 	 * 从map.txt中读取到类别和数字的map
-	 * 从预测的类别文件夹中得到的数字match到对应的类别
+	 * 从预测的类别文件夹中得到的数字match到对应的类别。这个类别文件是挺长的可以是任意长度。
+	 * 将对应的类别写到classNamefile中。这个里面是汉字的类别名称。
+	 * @param numFile  预测的类别
+	 * @param classFile
+	 */
+    public static void getClassFromNum(String mapFile,String numFile,String classNameFile){
+    	try{
+	    	//read in map
+	    	BufferedReader inMap=new BufferedReader(new InputStreamReader (new FileInputStream(mapFile),Constant.encoding));
+	    	ArrayList<String> al= new ArrayList<String>();
+			String tmp;
+			while((tmp=inMap.readLine())!=null){
+				String[] split=tmp.split(",");
+				if(tmp.length()!=0&&split.length==2){
+					al.add(Integer.valueOf(split[1])-1,split[0]);
+				}
+			}
+			inMap.close();
+			BufferedReader inNum=new BufferedReader(new InputStreamReader (new FileInputStream(numFile),Constant.encoding));
+			
+			String num=null;			
+			BufferedWriter out=null;
+			File f=new File(classNameFile);
+			if(!f.exists()){
+				f.createNewFile();
+			}
+			out=new BufferedWriter(new OutputStreamWriter(new FileOutputStream(f),Constant.encoding));
+			while((num=inNum.readLine())!=null){
+				out.write(al.get((int) (Double.valueOf(num)-1))+"\n");
+			}
+			inNum.close();
+			out.close();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+    }
+    /**
+	 * 从map.txt中读取到类别和数字的map
+	 * 从网页请求而预测的类别文件中得到的数字match到对应的类别 这个类别文件是极小的 只有一行数据。
+	 * 最后返回值为数字对应的类别
 	 * @param numFile  预测的类别
 	 * @param classFile
 	 */
@@ -65,7 +104,7 @@ public class MapClass {
 			String num;
 			num=inNum.readLine();
 			inNum.close();
-			return al.get((int) (Double.valueOf(num)-1));
+			return al.get((int)(Double.valueOf(num)-1));
 		}catch(Exception e){
 			e.printStackTrace();
 			return null;
