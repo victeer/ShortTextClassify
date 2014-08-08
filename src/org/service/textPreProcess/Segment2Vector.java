@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -25,10 +26,10 @@ public class Segment2Vector {
 	 * @param docVecFileString
 	 * @param form
 	 */
-	public static void getDocVecFromQiefenText(String dictFile,String docTermFile,String docVecFileString,String form){
+	public static void getDocVecFromQiefenText(String dictFile,String specialDictPath,String docTermFile,String docVecFileString,String form){
 		HashMap<String,Integer> wordList=DictGenerator.getWordList(dictFile);
-		int FeatureNum=wordList.size();
-		System.out.println("Feature num:"+FeatureNum);
+		HashSet<String> specialDict=DictGenerator.getSpecialWordList(specialDictPath);
+		System.out.println("Feature num:"+wordList.size()+"Special DictSize:"+specialDict.size());
 		//read docTerm.txt to get the doc vector
 		try{
 			BufferedWriter out=null;
@@ -43,17 +44,24 @@ public class Segment2Vector {
 				TreeMap<Integer,Integer> docArray=new TreeMap<Integer,Integer>();
 				String[] docTermList=termString.split("\t");
 				Integer pos=null;
-				for(String term:docTermList){
-					if((pos=wordList.get(term.trim().toLowerCase())) != null){
-				//		docArray[pos]++;
+				int length=docTermList.length;
+				//int blankCount=0;
+				int half=length/2;
+				for(int i=0;i<length;i++){
+					String term=docTermList[i].trim().toLowerCase();
+					if(term.length()!=0 && (pos=wordList.get(term))!=null){
+						//该词在词典中存在
+						int weight=1;
+						if(i>half && specialDict.contains(term)){
+							weight=i;
+						}
 						if(docArray.containsKey(pos)){
-							docArray.put(pos,docArray.get(pos)+1);
+							docArray.put(pos,docArray.get(pos)+weight);
 						}else{
-							docArray.put(pos,1);
+							docArray.put(pos,weight);
 						}
 					}
 				}
-				
 				//write to docVec.txt
 				String docVec="";
 				String className="";

@@ -20,8 +20,32 @@ import org.util.file.FileOperation;
 	   
 	} 
 public class Test {
-
-	public static void main(String args[]) throws IOException{
+	public static void weightTest(){
+		String path="D:\\实践活动\\项目\\搜狗地图\\POI描述分类\\tianjin test\\test\\weightTest";
+		String oriFileName="3.0001-5万切分.txt";
+		String oriFile=path+File.separator+oriFileName;
+		String textFile=path+File.separator+"nav_name.txt";
+		String classFile=path+File.separator+"className.txt";
+		String separateFile=path+File.separator+"segment.txt";
+		String dictFile=path+File.separator+"dict.txt";
+		String vecFile=path+File.separator+"docVec.txt";
+		String numFile=path+File.separator+"classNum.txt";
+		String libsvmFile=path+File.separator+"libsvm.txt";
+		String specialDictFile=path+File.separator+"specialDict.txt";
+//		FileOperation.splitTwoColumn(oriFile, ",", textFile, classFile);
+//		//deal with name 
+//		TextSegment.segment(textFile, separateFile);
+		Segment2Vector.getDocVecFromQiefenText(dictFile,specialDictFile,separateFile, vecFile, "libsvm");
+//		MapClass t=new MapClass();
+//
+//		t.Class2Num(classFile, numFile);
+		FileOperation.merge(numFile, vecFile, "\t", libsvmFile,"");
+		
+	}
+	public static void main(String args[]){
+		weightTest();
+	}
+	public static void action(String args[]) throws IOException{
 		int i;
 		String path="";
 		String oriFileName="";
@@ -70,6 +94,7 @@ public class Test {
 			FileOperation.splitTwoColumn(oriFile, ",", textFile, classFile);
 			//deal with name 
 			TextSegment.segment(textFile, separateFile);
+			
 			DictGenerator.createDict(separateFile, dictFile);
 			Segment2Vector.getDocVecFromQiefenText(dictFile,separateFile, vecFile, "libsvm");
 
