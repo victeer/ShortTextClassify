@@ -8,6 +8,8 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.util.Constant;
 /**
@@ -24,26 +26,8 @@ public class Segment2Vector {
 	 * @param form
 	 */
 	public static void getDocVecFromQiefenText(String dictFile,String docTermFile,String docVecFileString,String form){
-		HashMap<String,Integer> wordList=new HashMap<String,Integer>();
-		int FeatureNum=0;
-			
-			//read the wordlist into hashmap and make every word map a unique number.
-		try{
-			String word;
-			BufferedReader reader=new BufferedReader(new InputStreamReader (new FileInputStream(dictFile),Constant.encoding));
-			while((word=reader.readLine())!=null){
-				if (word.length()==0)
-					continue;
-				if(word.matches("[0-9]+"))
-						continue;
-					wordList.put(word, FeatureNum);
-					FeatureNum++;
-				}
-				System.out.println(FeatureNum);
-				reader.close();
-			}catch(Exception e){
-				e.printStackTrace();
-			}
+		HashMap<String,Integer> wordList=DictGenerator.getWordList(dictFile);
+		int FeatureNum=wordList.size();
 		System.out.println("Feature num:"+FeatureNum);
 		//read docTerm.txt to get the doc vector
 		try{
@@ -56,14 +40,17 @@ public class Segment2Vector {
 	        String termString;
 			BufferedReader reader=new BufferedReader(new InputStreamReader (new FileInputStream(docTermFile),Constant.encoding));
 			while((termString=reader.readLine())!=null){
-				int[] docArray=new int[FeatureNum];
-				for(int i=0;i<FeatureNum;i++)
-					docArray[i]=0;
+				TreeMap<Integer,Integer> docArray=new TreeMap<Integer,Integer>();
 				String[] docTermList=termString.split("\t");
 				Integer pos=null;
 				for(String term:docTermList){
 					if((pos=wordList.get(term.trim().toLowerCase())) != null){
-						docArray[pos]++;
+				//		docArray[pos]++;
+						if(docArray.containsKey(pos)){
+							docArray.put(pos,docArray.get(pos)+1);
+						}else{
+							docArray.put(pos,1);
+						}
 					}
 				}
 				
@@ -75,8 +62,6 @@ public class Segment2Vector {
 					docVec=shortForm(docArray);
 				}else if(form.equalsIgnoreCase("libSvm")){
 					docVec=libsvmForm(className, docArray);
-				}else if(form.equalsIgnoreCase("mySvm")){
-					docVec=mySvmForm(className, docArray);
 				}
 				out.write(docVec);
 			}
@@ -105,14 +90,16 @@ public class Segment2Vector {
 	    		 docVecFile.createNewFile();
 	    	 }
 	        out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(docVecFile),Constant.encoding));  
-			int[] docArray=new int[FeatureNum];
-			for(int i=0;i<FeatureNum;i++)
-				docArray[i]=0;
+	        TreeMap<Integer,Integer> docArray=new TreeMap<Integer,Integer>();
 			String[] docTermList=segmentResult.split("\t");
 			Integer pos=null;
 			for(String term:docTermList){
 				if((pos=wordList.get(term.trim().toLowerCase())) != null){
-					docArray[pos]++;
+					if(docArray.containsKey(pos)){
+						docArray.put(pos,docArray.get(pos)+1);
+					}else{
+						docArray.put(pos,1);
+					}
 				}
 			}
 				
@@ -124,8 +111,6 @@ public class Segment2Vector {
 				docVec=shortForm(docArray);
 			}else if(form.equalsIgnoreCase("libSvm")){
 				docVec=libsvmForm(className, docArray);
-			}else if(form.equalsIgnoreCase("mySvm")){
-				docVec=mySvmForm(className, docArray);
 			}
 			out.write(docVec);
 			out.close();
@@ -133,7 +118,9 @@ public class Segment2Vector {
 			e.printStackTrace();
 		}
 	}
-	private static String mySvmForm(String className,int[] docArray){
+	/**
+	 * 由于这种格式的数据太占地方了，所以退伍了，不再利用了。
+	private static String mySvmForm(String className,TreeMap<Integer,Integer>docArray){
 		String docVec="";
 		if(className!="")
 			docVec+=className+"\t";
@@ -143,30 +130,28 @@ public class Segment2Vector {
 		}
 		docVec+="\n";
 		return docVec;
-	}
-	private static String libsvmForm(String className,int[] docArray){
+	}*/
+	private static String libsvmForm(String className,TreeMap<Integer,Integer>docArray){
 		String docVec="";
 		if(className!="")
 			docVec+=className+"\t";
 		
-		for(int i=0;i<docArray.length;i++){
-			if(docArray[i]!=0){
-				docVec+=String.valueOf(i+1)+":"+String.valueOf(docArray[i])+" ";
-			}
+		for(Map.Entry<Integer,Integer> t:docArray.entrySet()){
+			docVec+=String.valueOf(t.getKey()+1)+":"+String.valueOf(t.getValue())+" ";
 		}
 		docVec+="\n";
 		return docVec;
 	}
-	private static String shortForm(int[] docArray){
+	private static String shortForm(TreeMap<Integer,Integer>docArray){
 		String docVec="";
-		for(int i=0;i<docArray.length;i++){
-			if(docArray[i]!=0){
-				//写多次该维向量
-				for(int j=0;j<docArray[i];j++){
-					docVec+=String.valueOf(i+1)+" ";
-				}
+		for(Map.Entry<Integer,Integer> t:docArray.entrySet()){
+			int key=t.getKey();
+			int count=t.getValue();
+			for(int j=0;j<count;j++){
+				docVec+=String.valueOf(key+1)+" ";
 			}
 		}
+
 		if(docVec==""){
 			System.out.println("zero");
 			//return "";  即使是空值，也写到文件中，和类别进行对应，这样的话比较容易找到对应的类别是哪个。
@@ -178,6 +163,7 @@ public class Segment2Vector {
 		//System.out.println(System.getProperty("java.class.path")+"\n"+System.getProperty("user.dir"));
 		//String s = "test中d文dsaf中男大3443n中国43中国人0ewldfls=103NO.津007";  
 		//getDocVecFromText("D:\\Project\\Java\\PoiClassify\\tmp\\data\\dict.txt", SingleWordSegment.seg(s), "D:\\Project\\Java\\PoiClassify\\tmp\\data\\vec.txt", "libSvm");
-		getDocVecFromQiefenText("","D:\\实践活动\\项目\\搜狗地图\\POI描述分类\\tianjin test\\nav_切分.txt", "D:\\实践活动\\项目\\搜狗地图\\POI描述分类\\tianjin test\\docVec.txt", "libsvm");
+		//getDocVecFromQiefenText("D:\\实践活动\\项目\\搜狗地图\\POI描述分类\\tmp\\dict.txt","D:\\实践活动\\项目\\搜狗地图\\POI描述分类\\tmp\\segment.txt", "D:\\实践活动\\项目\\搜狗地图\\POI描述分类\\tmp\\docVec.txt", "libsvm");
+		getDocVecFromSegmentString("D:\\实践活动\\项目\\搜狗地图\\POI描述分类\\tmp\\dict.txt","天		津		城		建		集		团		路		桥		建		设		工		程		公		司", "D:\\实践活动\\项目\\搜狗地图\\POI描述分类\\tmp\\docVec.txt", "libsvm");
 	}
 }
