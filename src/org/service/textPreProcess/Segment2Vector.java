@@ -20,8 +20,21 @@ import org.util.Constant;
  *
  */
 public class Segment2Vector {
-	/**
+	/**v0
 	 * 根据字典将读入的POI单字文本转化为mySVMform、libsvmForm、shortForm等形式的向量表示
+	 * character weight is set by condition: 1.when occurs at later half of </br>
+	 * the word and it contains in the special dictionary, weight is its position in this word;</br>
+	 * 2.when otherwise weight is 1. </br>
+	 * Then the character, for example 'Spa', its weight in the total word is the sum of all these conditions.</br>
+	 * rate=83.9%
+	 * @modified v1 2014-08-12 @author Victor
+	 * the character weight is set to be 7 when it satisfy condition 1, otherwise set to be 1.</br>
+	 * and no consider about the occurrence time or other things.</br>
+	 * for the word is not same length, and position 7 is much small than 17.</br> 
+	 * rate=85.1%
+	 * @modified v2 use the origin 0/1 weight just widen the dimension from 4980 to 5020. rate is 87.2%</br>
+	 * @modified v1 by weight to 3,rate =87.19%
+	 * @more see the more experiment on ./ExperimentTable.xls
 	 * @param docTermFile
 	 * @param docVecFileString
 	 * @param form
@@ -52,11 +65,11 @@ public class Segment2Vector {
 					if(term.length()!=0 && (pos=wordList.get(term))!=null){
 						//该词在词典中存在
 						int weight=1;
-						if(i>half && specialDict.contains(term)){
-							weight=i;
+						if(i>half ){//i>half &&specialDict.contains(term)
+							weight=2;
 						}
 						if(docArray.containsKey(pos)){
-							docArray.put(pos,docArray.get(pos)+weight);
+							docArray.put(pos,weight);//docArray.get(pos)+
 						}else{
 							docArray.put(pos,weight);
 						}
