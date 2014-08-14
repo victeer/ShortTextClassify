@@ -129,7 +129,7 @@ public class MapClass {
 			while((tmp=in.readLine())!=null){
 				String name=tmp.trim();
 				if(name.length()!=0&&map.containsKey(name)){
-				    System.out.println(name);
+				    //System.out.println(name);
 					out.write(map.get(name).toString());
 				}
 				out.write("\n");

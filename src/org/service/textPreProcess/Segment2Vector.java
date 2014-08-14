@@ -27,8 +27,7 @@ public class Segment2Vector {
 	 */
 	public static void getDocVecFromQiefenText(String dictFile,String docTermFile,String docVecFileString,String form){
 		HashMap<String,Integer> wordList=DictGenerator.getWordList(dictFile);
-		int FeatureNum=wordList.size();
-		System.out.println("Feature num:"+FeatureNum);
+		//System.out.println("Feature num:"+FeatureNum);
 		//read docTerm.txt to get the doc vector
 		try{
 			BufferedWriter out=null;

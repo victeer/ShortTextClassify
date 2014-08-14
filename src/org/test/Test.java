@@ -1,8 +1,6 @@
 package org.test;
 
 import java.io.File;
-import java.io.IOException;
-
 import org.service.MapClass;
 import org.service.svm.svm_predict;
 import org.service.textPreProcess.DictGenerator;
@@ -21,7 +19,8 @@ import org.util.file.FileOperation;
 	} 
 public class Test {
 
-	public static void main(String args[]) throws IOException{
+	public static void main(String args[]){
+		try{
 		int i;
 		String path="";
 		String oriFileName="";
@@ -30,6 +29,8 @@ public class Test {
 		{
 			if(args[i].charAt(0) != '-') break;
 			++i;
+			if(i>=args.length)
+				exit_with_help();
 			switch(args[i-1].charAt(1))
 			{
 				case 'p'://path 
@@ -57,10 +58,12 @@ public class Test {
 					exit_with_help();
 			}
 		}
+
 		String oriFile=path+File.separator+oriFileName;
 		String textFile=path+File.separator+"nav_name.txt";
 		String separateFile=path+File.separator+"segment.txt";
 		String dictFile=path+File.separator+"dict.txt";
+
 		String vecFile=path+File.separator+"docVec.txt";
 		String classFile=path+File.separator+"className.txt";
 		String numFile=path+File.separator+"classNum.txt";
@@ -88,10 +91,10 @@ public class Test {
 			t.Class2Num(classFile, numFile);
 			FileOperation.merge(numFile, vecFile, "\t", libsvmFile,"");
 	    	String resultNumFile=path+"\\resultNum.txt";
-	    	String modelFile=path+"\\final.model";
+	    	String modelFile=path+File.separator+"final.model";
 		   	String[] testArgs = {libsvmFile, modelFile, resultNumFile};//directory of test file, model file, result file  
 	        svm_predict.main(testArgs); 
-	        String mapFile=path+"\\map.txt";
+	        String mapFile=path+File.separator+"map.txt";
 	        String predictClassNameFile=path+"\\predictClassName.txt";
 	        String compareFile=path+"\\compare.csv";
 	        //read predict result and according to map to get its className;
@@ -100,19 +103,24 @@ public class Test {
 	        FileOperation.merge(oriFile, predictClassNameFile, ",", compareFile,"POI名称,实际类别,预测类别");
 	    	String assessmentFile=path+"\\assessment.csv";
 	    	Criteria.calCriteria(numFile, resultNumFile, assessmentFile);
+		}else{
+			exit_with_help();
+		}
+		}catch(Exception e){
+			e.printStackTrace();
 		}
 		
 		
 	}
 	private static void exit_with_help()
 	{
-		System.err.print("usage: textProcess [options] \n"
+		System.err.print("Usage:java -jar textProcess.jar [options] \n"
 		+"options:\n"
 		+"-p :directory contains the file waiting for process \n"
 		+"-n :file name which need to process \n"
-		+"-t :transform the file to libsvm form and create dict.txt in addition.\n"
+		//+"-t :transform the file to libsvm form and create dict.txt in addition.\n"
 		+"-g :guess the class of data and compare with oriClass, and assess criteria on all classes.\n"
-		+"-q :no class already assign to name \n");
+		);//+"-q :no class already assign to name \n");
 		System.exit(1);
 	}
 }

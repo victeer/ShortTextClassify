@@ -38,7 +38,7 @@ public class DictGenerator {
 					wordList.put(word, FeatureNum);
 					FeatureNum++;
 				}
-				System.out.println(FeatureNum);
+				//System.out.println(FeatureNum);
 				reader.close();
 			}catch(Exception e){
 				e.printStackTrace();
