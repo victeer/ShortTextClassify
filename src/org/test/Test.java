@@ -29,8 +29,7 @@ public class Test {
 		{
 			if(args[i].charAt(0) != '-') break;
 			++i;
-			if(i>=args.length)
-				exit_with_help();
+			
 			switch(args[i-1].charAt(1))
 			{
 				case 'p'://path 
@@ -59,16 +58,31 @@ public class Test {
 			}
 		}
 
+        String confPath=path+File.separator+"conf";
+        String resultPath=path+File.separator+"result";
+        File file = new File(resultPath); 
+        if(file!=null&&!file.exists()){ 
+        	file.mkdirs(); 
+        }
+        
 		String oriFile=path+File.separator+oriFileName;
-		String textFile=path+File.separator+"nav_name.txt";
-		String separateFile=path+File.separator+"segment.txt";
-		String dictFile=path+File.separator+"dict.txt";
-
-		String vecFile=path+File.separator+"docVec.txt";
-		String classFile=path+File.separator+"className.txt";
-		String numFile=path+File.separator+"classNum.txt";
-		String libsvmFile=path+File.separator+"libsvm.txt";
+		//confPath
+		String dictFile=confPath+File.separator+"dict.txt";
+		String modelFile=confPath+File.separator+"final.model";
+		String mapFile=confPath+File.separator+"map.txt";
 		
+		//resultPath
+		String textFile=resultPath+File.separator+"nav_name.txt";
+		String separateFile=resultPath+File.separator+"segment.txt";
+		String vecFile=resultPath+File.separator+"docVec.txt";
+		String classFile=resultPath+File.separator+"className.txt";
+		String numFile=resultPath+File.separator+"classNum.txt";
+		String libsvmFile=resultPath+File.separator+"libsvm.txt";
+		String resultNumFile=resultPath+File.separator+"resultNum.txt";
+        String predictClassNameFile=resultPath+File.separator+"predictClassName.txt";
+        String compareFile=resultPath+File.separator+"compare.csv";
+    	String assessmentFile=resultPath+File.separator+"assessment.csv";
+    	
 		if(ff==Function.Transform){
 			FileOperation.splitTwoColumn(oriFile, ",", textFile, classFile);
 			//deal with name 
@@ -90,18 +104,17 @@ public class Test {
 			MapClass t=new MapClass();
 			t.Class2Num(classFile, numFile);
 			FileOperation.merge(numFile, vecFile, "\t", libsvmFile,"");
-	    	String resultNumFile=path+"\\resultNum.txt";
-	    	String modelFile=path+File.separator+"final.model";
+	    	
+	    	
 		   	String[] testArgs = {libsvmFile, modelFile, resultNumFile};//directory of test file, model file, result file  
 	        svm_predict.main(testArgs); 
-	        String mapFile=path+File.separator+"map.txt";
-	        String predictClassNameFile=path+"\\predictClassName.txt";
-	        String compareFile=path+"\\compare.csv";
+	        
+
 	        //read predict result and according to map to get its className;
 	        
 	        MapClass.getClassFromNum(mapFile, resultNumFile,predictClassNameFile);
 	        FileOperation.merge(oriFile, predictClassNameFile, ",", compareFile,"POI名称,实际类别,预测类别");
-	    	String assessmentFile=path+"\\assessment.csv";
+
 	    	Criteria.calCriteria(numFile, resultNumFile, assessmentFile);
 		}else{
 			exit_with_help();
