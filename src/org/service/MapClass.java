@@ -131,6 +131,8 @@ public class MapClass {
 				if(name.length()!=0&&map.containsKey(name)){
 				    //System.out.println(name);
 					out.write(map.get(name).toString());
+				}else{
+					out.write("19");//ÆäËü
 				}
 				out.write("\n");
 			}
