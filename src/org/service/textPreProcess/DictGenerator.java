@@ -23,6 +23,11 @@ import org.util.Constant;
  *
  */
 public class DictGenerator {
+	/**
+	 * word index start with zero 
+	 * @param dictPath
+	 * @return
+	 */
 	public static HashMap<String, Integer> getWordList(String dictPath) {
 		HashMap<String,Integer> wordList=new HashMap<String,Integer>();
 		int FeatureNum=0;	
