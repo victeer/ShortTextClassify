@@ -10,11 +10,17 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.apache.catalina.tribes.group.interceptors.TwoPhaseCommitInterceptor.MapEntry;
 import org.util.Constant;
 
+/**
+ * class num start with 1 to 19.
+ * @author Victor
+ *
+ */
 public class MapClass {
 	private HashMap<String,Integer> map;
-
+	private String[] num2Class;
 	
 	// TODO 变成单例模式
 	public MapClass(){
@@ -38,7 +44,14 @@ public class MapClass {
 		map.put("邮政电信",17);
 		map.put("政府机关",18);
 		map.put("其它",19);
+		num2Class= new String[20];
+		for(String t:map.keySet()){
+			num2Class[map.get(t)]=t;
+		}
 
+	}
+	public String Num2Class(int index){
+		return num2Class[index];
 	}
 	/**
 	 * 从map.txt中读取到类别和数字的map

@@ -59,12 +59,19 @@ public class Test {
 		}
 
         String confPath=path+File.separator+"conf";
-        String resultPath=path+File.separator+"result";
-        File file = new File(resultPath); 
-        if(file!=null&&!file.exists()){ 
-        	file.mkdirs(); 
+        {	
+        	File file = new File(confPath); 
+        	if(file!=null&&!file.exists()){ 
+        		file.mkdirs(); 
+        	}
         }
-        
+        String resultPath=path+File.separator+"result";
+        {
+        	File file = new File(resultPath); 
+	        if(file!=null&&!file.exists()){ 
+	        	file.mkdirs(); 
+	        }
+        }
 		String oriFile=path+File.separator+oriFileName;
 		//confPath
 		String dictFile=confPath+File.separator+"dict.txt";
@@ -84,21 +91,21 @@ public class Test {
     	String assessmentFile=resultPath+File.separator+"assessment.csv";
     	
 		if(ff==Function.Transform){
-			FileOperation.splitTwoColumn(oriFile, ",", textFile, classFile);
-			//deal with name 
-			TextSegment.segment(textFile, separateFile);
-			DictGenerator.createDict(separateFile, dictFile);
+//			FileOperation.splitTwoColumn(oriFile, ",", textFile, classFile);
+//			//deal with name 
+//			TextSegment.segment(textFile, separateFile);
+			//DictGenerator.createDict(separateFile, dictFile);
 			Segment2Vector.getDocVecFromQiefenText(dictFile,separateFile, vecFile, "libsvm");
 
 			//deal with class 
-			MapClass t=new MapClass();
-
-			t.Class2Num(classFile, numFile);
+//			MapClass t=new MapClass();
+//
+//			t.Class2Num(classFile, numFile);
 			FileOperation.merge(numFile, vecFile, "\t", libsvmFile,"");
 		}else if(ff==Function.Guess){
-			FileOperation.splitTwoColumn(oriFile, ",", textFile, classFile);
+			//FileOperation.splitTwoColumn(oriFile, ",", textFile, classFile);
 			//deal with name 
-			TextSegment.segment(textFile, separateFile);
+			//TextSegment.segment(textFile, separateFile);
 			Segment2Vector.getDocVecFromQiefenText(dictFile,separateFile, vecFile, "libsvm");
 			//deal with class 
 			MapClass t=new MapClass();
