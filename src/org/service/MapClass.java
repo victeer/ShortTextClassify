@@ -10,7 +10,6 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.apache.catalina.tribes.group.interceptors.TwoPhaseCommitInterceptor.MapEntry;
 import org.util.Constant;
 
 /**

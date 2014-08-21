@@ -17,8 +17,6 @@ import java.util.StringTokenizer;
 import org.service.MapClass;
 import org.service.textPreProcess.DictGenerator;
 import org.util.Constant;
-import org.util.file.FileOperation;
-
 import libsvm.svm_node;
 
 /**
