@@ -20,9 +20,12 @@ import org.util.file.FileOperation;
 	   
 	} 
 public class Test {
+	/**
+	 * 
+	 */
 	public static void weightTest(){
 		String path="D:\\实践活动\\项目\\搜狗地图\\POI描述分类\\tianjin test\\test\\weightTest\\0.07-1.07万";
-		String oriFileName="3.0001-5万切分.txt";
+		String oriFileName="test2.csv";
 		String oriFile=path+File.separator+oriFileName;
 		String textFile=path+File.separator+"nav_name.txt";
 		String classFile=path+File.separator+"className.txt";
@@ -32,13 +35,13 @@ public class Test {
 		String numFile=path+File.separator+"classNum.txt";
 		String libsvmFile=path+File.separator+"libsvm.txt";
 		String specialDictFile=path+File.separator+"specialDict.txt";
-//		FileOperation.splitTwoColumn(oriFile, ",", textFile, classFile);
-//		//deal with name 
-//		TextSegment.segment(textFile, separateFile);
+		FileOperation.splitTwoColumn(oriFile, ",", textFile, classFile);
+		//deal with name 
+		TextSegment.segment(textFile, separateFile);
 		Segment2Vector.getDocVecFromQiefenText(dictFile,specialDictFile,separateFile, vecFile, "libsvm");
-//		MapClass t=new MapClass();
-//
-//		t.Class2Num(classFile, numFile);
+		MapClass t=new MapClass();
+
+		t.Class2Num(classFile, numFile);
 		FileOperation.merge(numFile, vecFile, "\t", libsvmFile,"");
 		
 	}

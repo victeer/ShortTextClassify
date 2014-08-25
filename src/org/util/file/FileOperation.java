@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
@@ -93,5 +94,40 @@ public class FileOperation {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+	}
+	/**
+	 * 从splitFile文件中的startLine到endline，闭合区间内取出所有的数据到resultFile中。
+	 * @param spiltFile
+	 * @param startLine
+	 * @param endLine
+	 * @param resultFile
+	 */
+	public static void split(String spiltFile,int startLine,int endLine,String resultFile){
+		try{
+			BufferedReader in=new BufferedReader(new FileReader(spiltFile));
+			int i=1;
+			while(i<startLine){
+				in.readLine();
+				i++;
+			}
+			BufferedWriter out=null;
+			File f=new File(resultFile);
+			if(!f.exists()){
+				f.createNewFile();
+			}
+			out=new BufferedWriter(new OutputStreamWriter(new FileOutputStream(f)));
+			String str;
+			while(i<=endLine&&(str=in.readLine())!=null){
+				out.write(str+"\n");
+				i++;
+			}
+			out.close();
+			in.close();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	public static void main(String[] args){
+		split("D:\\实践活动\\项目\\搜狗地图\\POI描述分类\\tianjin test\\test\\nav_tianjin.csv", 100000 ,121078, "D:\\实践活动\\项目\\搜狗地图\\POI描述分类\\tianjin test\\test\\100万数据.csv");
 	}
 }

@@ -56,6 +56,7 @@ public class Segment2Vector {
 			while((termString=reader.readLine())!=null){
 				TreeMap<Integer,Integer> docArray=new TreeMap<Integer,Integer>();
 				String[] docTermList=termString.split("\t");
+				
 				Integer pos=null;
 				int length=docTermList.length;
 				//int blankCount=0;
@@ -65,8 +66,8 @@ public class Segment2Vector {
 					if(term.length()!=0 && (pos=wordList.get(term))!=null){
 						//该词在词典中存在
 						int weight=1;
-						if(i>half ){//i>half &&specialDict.contains(term)
-							weight=2;
+						if(i>half &&specialDict.contains(term)){//i>half &&specialDict.contains(term)
+							weight=7;
 						}
 						if(docArray.containsKey(pos)){
 							docArray.put(pos,weight);//docArray.get(pos)+
