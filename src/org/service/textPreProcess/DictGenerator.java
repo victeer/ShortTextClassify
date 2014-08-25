@@ -23,6 +23,11 @@ import org.util.Constant;
  *
  */
 public class DictGenerator {
+	/**
+	 * word index start with zero 
+	 * @param dictPath
+	 * @return
+	 */
 	public static HashMap<String, Integer> getWordList(String dictPath) {
 		HashMap<String,Integer> wordList=new HashMap<String,Integer>();
 		int FeatureNum=0;	
@@ -31,17 +36,16 @@ public class DictGenerator {
 			String word;
 			BufferedReader reader=new BufferedReader(new InputStreamReader(new FileInputStream(dictPath),Constant.encoding));
 			while((word=reader.readLine())!=null){
-				if (word.length()==0)
-					continue;
-				if(word.matches("[0-9]+"))
+				if (word.length()==0 || word.matches("[0-9]+") )
 					continue;
 				wordList.put(word, FeatureNum);
 				FeatureNum++;
+				}
+				//System.out.println(FeatureNum);
+				reader.close();
+			}catch(Exception e){
+				e.printStackTrace();
 			}
-			reader.close();
-		}catch(Exception e){
-			e.printStackTrace();
-		}
 		return wordList;
 	}
 	public static HashSet<String> getSpecialWordList(String dictPath) {
@@ -51,9 +55,7 @@ public class DictGenerator {
 			String word;
 			BufferedReader reader=new BufferedReader(new InputStreamReader(new FileInputStream(dictPath),Constant.encoding));
 			while((word=reader.readLine())!=null){
-				if (word.length()==0)
-					continue;
-				if(word.matches("[0-9]+"))
+				if (word.length()==0||word.matches("[0-9]+"))
 					continue;
 				wordList.add(word);
 			}

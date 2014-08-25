@@ -63,11 +63,13 @@ public class svm_predict {
 				output.writeBytes("\n");
 			}
 		}
+		int lineCount=0;
 		while(true)
 		{
 			String line = input.readLine();
 			if(line == null) break;
-
+			lineCount++;
+			System.out.println(lineCount);
 			StringTokenizer st = new StringTokenizer(line," \t\n\r\f:");
 
 			double target = atof(st.nextToken());

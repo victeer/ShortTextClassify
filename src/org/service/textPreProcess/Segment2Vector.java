@@ -39,10 +39,15 @@ public class Segment2Vector {
 	 * @param docVecFileString
 	 * @param form
 	 */
-	public static void getDocVecFromQiefenText(String dictFile,String specialDictPath,String docTermFile,String docVecFileString,String form){
+	public static void getDocVecFromQiefenText(String dictFile,String specialDictPath,String docTermFile,String docVecFileString,String form,boolean weighted){
 		HashMap<String,Integer> wordList=DictGenerator.getWordList(dictFile);
-		HashSet<String> specialDict=DictGenerator.getSpecialWordList(specialDictPath);
+
+		HashSet<String> specialDict=null;
+		if(weighted==true)
+			specialDict=DictGenerator.getSpecialWordList(specialDictPath);
 		System.out.println("Feature num:"+wordList.size()+"Special DictSize:"+specialDict.size());
+
+		//System.out.println("Feature num:"+FeatureNum);
 		//read docTerm.txt to get the doc vector
 		try{
 			BufferedWriter out=null;
@@ -63,11 +68,14 @@ public class Segment2Vector {
 				int half=length/2;
 				for(int i=0;i<length;i++){
 					String term=docTermList[i].trim().toLowerCase();
+					//TODO add the not occur word to a sense.				
 					if(term.length()!=0 && (pos=wordList.get(term))!=null){
 						//该词在词典中存在
 						int weight=1;
-						if(i>half &&specialDict.contains(term)){//i>half &&specialDict.contains(term)
-							weight=7;
+						if(weighted){
+							if(i>half &&specialDict.contains(term)){//i>half &&specialDict.contains(term)
+								weight=7;
+							}
 						}
 						if(docArray.containsKey(pos)){
 							docArray.put(pos,weight);//docArray.get(pos)+
